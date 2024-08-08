@@ -9,7 +9,7 @@ services:
       - "5173:5173"
     volumes:
       - vue_build:/dist
-    command: [ "sh", "-c", "npm install && npm run build && cp -r /app/dist /dist" ]
+    command: ["npm", "run", "dev"]
 
   spring:
     build:
@@ -40,7 +40,9 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done'"
+        # entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done'"
+        #entrypoint: "certbot certonly --webroot --webroot-path=/var/www/certbot --email wer1915@gmail.com --agree-tos --no-eff-email -d www.myga.digital --rsa-key-size 2048"
+    entrypoint: ["sh", "-c", "certbot certonly --webroot --webroot-path=/var/www/certbot --email wer1915@gmail.com --agree-tos --no-eff-email --staging -d www.myga.digital --rsa-key-size 2048"]
 
 volumes:
   vue_build:

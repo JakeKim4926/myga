@@ -1,5 +1,5 @@
 # 단계 1: 빌드 단계
-FROM node:16-alpine AS build
+FROM node:20-alpine AS build
 
 # 작업 디렉터리 설정
 WORKDIR /app
@@ -18,5 +18,5 @@ RUN npm run build
 
 EXPOSE 5173
 
-# 빌드된 파일을 다른 곳에 복사하기 위한 준비
-CMD ["cp", "-r", "/app/dist", "/dist"]
+# 애플리케이션 시작 명령어
+CMD ["npm", "run", "preview"]
