@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  vue-app:
+  vue:
     build:
       context: ./myga_front
       dockerfile: dockerfile-vue
@@ -9,5 +9,13 @@ services:
       - vue_build:/dist
     command: ["sh", "-c", "npm install && npm run build && cp -r /app/dist /dist"]
 
+  spring:
+    build:
+      context: ./myga_back
+      dockerfile: dockerfile-spring
+    ports:
+      - "8037:8037"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
 volumes:
   vue_build:

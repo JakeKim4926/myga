@@ -1,0 +1,34 @@
+# Use the official Gradle image to create a build artifact.
+# https://hub.docker.com/_/gradle
+FROM gradle:7.4.2-jdk17 AS build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the Gradle wrapper and project files
+COPY gradlew ./
+COPY gradle ./gradle
+COPY build.gradle settings.gradle ./
+
+# Download Gradle dependencies
+RUN ./gradlew build -x test --no-daemon
+
+# Copy the source code and build the application
+COPY src ./src
+RUN ./gradlew build -x test --no-daemon
+
+# Use the official OpenJDK image to run the application
+# https://hub.docker.com/_/openjdk
+FROM openjdk:17-jdk-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the jar file from the build stage
+COPY --from=build /app/build/libs/*.jar app.jar
+
+# Expose the port the app runs on
+EXPOSE 8037
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,5 +1,30 @@
+server:
+  port: 8037
+
+# 기본 설정
 spring:
   datasource:
+
+
+# 개발 환경 설정
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+
+
+# 프로덕션 환경 설정
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+
+
+
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: ${MYSQL_DATASOURCE_URL}
 #    username: ${MYSQL_DATASOURCE_USERNAME}
