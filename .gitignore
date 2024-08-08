@@ -1,2 +1,4 @@
 # Ignore all .idea directories
 **/.idea/
+certbot/conf/
+certbot/www/
