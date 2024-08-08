@@ -1,0 +1,22 @@
+# 단계 1: 빌드 단계
+FROM node:16-alpine AS build
+
+# 작업 디렉터리 설정
+WORKDIR /app
+
+# package.json 및 package-lock.json 복사
+COPY package*.json ./
+
+# 의존성 설치
+RUN npm install
+
+# 애플리케이션 코드 복사
+COPY . .
+
+# 빌드
+RUN npm run build
+
+EXPOSE 3000
+
+# 빌드된 파일을 다른 곳에 복사하기 위한 준비
+CMD ["cp", "-r", "/app/dist", "/dist"]
