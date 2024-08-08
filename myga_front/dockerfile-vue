@@ -16,7 +16,7 @@ COPY . .
 # 빌드
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 5173
 
 # 빌드된 파일을 다른 곳에 복사하기 위한 준비
 CMD ["cp", "-r", "/app/dist", "/dist"]
