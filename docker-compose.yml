@@ -9,7 +9,7 @@ services:
       - "5173:5173"
     volumes:
       - vue_build:/dist
-    command: ["npm", "run", "dev"]
+    command: ["npm", "run", "dev", "--", "--host"]
 
   spring:
     build:
@@ -41,6 +41,7 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done'"
+
 
 volumes:
   vue_build:
