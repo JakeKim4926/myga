@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_CREDENTIALS_ID = credentials('myga_github')
+        GIT_URL = 'https://github.com/JakeKim4926/myga.git'
+    }
+
+    stages {
+        stage('Pull Code') {
+            steps {
+                script {
+                    // Checkout the code from GitHub
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: '*/release']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [],
+                        userRemoteConfigs: [[credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_URL}"]]
+                    ])
+                }
+            }
+        }
+
+        stage('build Vue') {
+            steps {
+                script {
+                    // Build and deploy Vue application
+                    sh 'docker-compose up -d --build vue'
+                }
+            }
+        }
+
+        stage('build Spring') {
+            steps {
+                script {
+                    // Build and deploy Spring application
+                    sh 'docker-compose up -d --build spring'
+                }
+            }
+        }
+
+        stage('update nginx') {
+            steps {
+                script {
+                    // Update Nginx
+                    sh 'docker-compose up -d --build nginx'
+                }
+            }
+        }
+
+        stage('update certbot') {
+            steps {
+                script {
+                    // Update Certbot
+                    sh 'docker-compose up -d --build certbot'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up Docker resources if needed
+            sh 'docker system prune -f'
+        }
+
+        success {
+            echo 'Deployment completed successfully!'
+        }
+
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
