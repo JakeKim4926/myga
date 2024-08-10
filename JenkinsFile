@@ -5,7 +5,7 @@ pipeline {
         GIT_CREDENTIALS_ID = credentials('myga_github')
         GIT_URL = 'https://github.com/JakeKim4926/myga.git'
     }
-
+    // test
     stages {
         stage('Pull Code') {
             steps {
