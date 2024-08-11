@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GIT_CREDENTIALS_ID = credentials('myga_github')
+        GIT_CREDENTIALS_ID = 'myga_github'
         GIT_URL = 'https://github.com/JakeKim4926/myga.git'
     }
     // test
