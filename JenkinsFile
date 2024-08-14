@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     // Update Nginx
-                    sh 'docker-compose up -d --build nginx'
+                    sh 'docker-compose up -d nginx'
                 }
             }
         }
@@ -52,7 +52,7 @@ pipeline {
             steps {
                 script {
                     // Update Certbot
-                    sh 'docker-compose up -d --build certbot'
+                    sh 'docker-compose up -d certbot'
                 }
             }
         }

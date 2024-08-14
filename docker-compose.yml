@@ -49,6 +49,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /jenkins:/var/jenkins_home
       - /home:/home
+      - /home/ubuntu/myga/nginx:/var/jenkins_home/workspace/myga/nginx
     ports:
       - 8080:8080
     privileged: true
