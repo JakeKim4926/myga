@@ -48,28 +48,14 @@ pipeline {
             }
         }
 
-        stage('update certbot') {
-            steps {
-                script {
-                    // Update Certbot
-                    sh 'docker-compose up -d certbot'
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            // Clean up Docker resources if needed
-            sh 'docker system prune -f'
-        }
-
-        success {
-            echo 'Deployment completed successfully!'
-        }
-
-        failure {
-            echo 'Deployment failed!'
-        }
+        post {
+               success {
+                   echo 'Deployment completed successfully!'
+               }
+       
+               failure {
+                   echo 'Deployment failed!'
+               }
+           }
     }
 }
