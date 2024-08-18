@@ -27,8 +27,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - /home/ubuntu/myga/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /home/ubuntu/myga/nginx/conf.d:/etc/nginx/conf.d
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
 
@@ -36,8 +36,8 @@ services:
     image: certbot/certbot
     container_name: certbot
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - /home/ubuntu/certbot/www:/var/www/certbot
+      - /home/ubuntu/certbot/conf:/etc/letsencrypt
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done'"
  
   jenkins:
@@ -47,8 +47,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /jenkins:/var/jenkins_home
       - /home:/home
-      - ./certbot:/var/jenkins_home/certbot
-      - ./nginx:/var/jenkins_home/nginx
     ports:
       - 8080:8080
     privileged: true
