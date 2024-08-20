@@ -19,26 +19,34 @@ pipeline {
                     ])
                 }
 
-                // Canary 브랜치로 체크아웃되면 Canary 배포
+                // Canary 배포 여부를 확인하기 위해 로컬 변수 사용
+                def isCanary = false
                 if (env.GIT_BRANCH == 'origin/release-canary') {
-                    env.CANARY_DEPLOY = true
+                    isCanary = true
                 }
+
+                // Canary 배포 환경 변수 설정
+                env.CANARY_DEPLOY = isCanary.toString()
             }
         }
 
         stage('build Vue') {
+            when {
+                expression { env.CANARY_DEPLOY == 'false' }
+            }
             steps {
                 script {
-                    // Build and deploy Vue application
                     sh 'docker-compose up -d --build vue'
                 }
             }
         }
 
         stage('build Spring') {
+            when {
+                expression { env.CANARY_DEPLOY == 'false' }
+            }
             steps {
                 script {
-                    // Build and deploy Spring application
                     sh 'docker-compose up -d --build spring'
                 }
             }
@@ -69,7 +77,6 @@ pipeline {
         stage('update nginx') {
             steps {
                 script {
-                    // Update Nginx
                     sh 'docker exec nginx nginx -s reload'
                 }
             }
