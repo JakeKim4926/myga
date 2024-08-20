@@ -18,6 +18,11 @@ pipeline {
                         userRemoteConfigs: [[credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_URL}"]]
                     ])
                 }
+
+                // Canary 브랜치로 체크아웃되면 Canary 배포
+                if (env.GIT_BRANCH == 'origin/release-canary') {
+                    env.CANARY_DEPLOY = true
+                }
             }
         }
 
@@ -39,11 +44,33 @@ pipeline {
             }
         }
 
+        stage('build Vue Canary') {
+            when {
+                expression { env.CANARY_DEPLOY == 'true' }
+            }
+            steps {
+                script {
+                    sh 'docker-compose up -d --build vue-canary'
+                }
+            }
+        }
+
+        stage('build Spring Canary') {
+            when {
+                expression { env.CANARY_DEPLOY == 'true' }
+            }
+            steps {
+                script {
+                    sh 'docker-compose up -d --build spring-canary'
+                }
+            }
+        }
+
         stage('update nginx') {
             steps {
                 script {
                     // Update Nginx
-                    sh 'docker-compose up -d nginx'
+                    sh 'docker exec nginx nginx -s reload'
                 }
             }
         }
