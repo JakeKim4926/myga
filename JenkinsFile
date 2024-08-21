@@ -17,24 +17,59 @@ pipeline {
                         extensions: [],
                         userRemoteConfigs: [[credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_URL}"]]
                     ])
+
+                    // Canary 배포 여부를 확인하기 위해 로컬 변수 사용
+                    def isCanary = false
+                    if (env.GIT_BRANCH == 'origin/release-canary') {
+                        isCanary = true
+                    }
+
+                    // Canary 배포 환경 변수 설정
+                    env.CANARY_DEPLOY = isCanary.toString()
                 }
             }
         }
 
         stage('build Vue') {
+            when {
+                expression { env.CANARY_DEPLOY == 'false' }
+            }
             steps {
                 script {
-                    // Build and deploy Vue application
                     sh 'docker-compose up -d --build vue'
                 }
             }
         }
 
         stage('build Spring') {
+            when {
+                expression { env.CANARY_DEPLOY == 'false' }
+            }
             steps {
                 script {
-                    // Build and deploy Spring application
                     sh 'docker-compose up -d --build spring'
+                }
+            }
+        }
+
+        stage('build Vue Canary') {
+            when {
+                expression { env.CANARY_DEPLOY == 'true' }
+            }
+            steps {
+                script {
+                    sh 'docker-compose up -d --build vue-canary'
+                }
+            }
+        }
+
+        stage('build Spring Canary') {
+            when {
+                expression { env.CANARY_DEPLOY == 'true' }
+            }
+            steps {
+                script {
+                    sh 'docker-compose up -d --build spring-canary'
                 }
             }
         }
@@ -42,8 +77,7 @@ pipeline {
         stage('update nginx') {
             steps {
                 script {
-                    // Update Nginx
-                    sh 'docker-compose up -d nginx'
+                    sh 'docker exec nginx nginx -s reload'
                 }
             }
         }

@@ -11,12 +11,31 @@ services:
       - vue_build:/dist
     command: ["npm", "run", "dev", "--", "--host"]
 
+  vue-canary:
+    build:
+      context: ./myga_front
+      dockerfile: dockerfile-vue
+    ports:
+      - "5174:5173"
+    volumes:
+      - vue_build:/dist
+    command: [ "npm", "run", "dev", "--", "--host" ]
+
   spring:
     build:
       context: ./myga_back
       dockerfile: dockerfile-spring
     ports:
       - "8037:8037"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  spring-canary:
+    build:
+      context: ./myga_back
+      dockerfile: dockerfile-spring
+    ports:
+      - "8038:8037"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
 
