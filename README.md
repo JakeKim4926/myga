@@ -44,7 +44,7 @@
 
 
 ## Server
-- Oracle Cloud (Free tier)
+- Ubuntu 20.04.6 LTS ( Oracle Cloud - Free tier )
 - Docker
 - Docker-compose
 - Jenkins
@@ -76,6 +76,7 @@
 
 | 버전  | 날짜       | 주요 변경 사항              | 태그 |
 |-------|------------|------------------------------|------------|
+| v0.3.0  | 2024-08-22 | Spring Rest Docs 설정  | Feature |
 | v0.2.0  | 2024-08-21 | canary 배포 환경 설정  | Feature |
 | v0.1.1  | 2024-08-20 | ReadMe 작성  | Feature |
 | v0.1.0  | 2024-08-18 | Spring, Vue, Docker-compose, Jenkins 초기 환경 설정  | Feature |
