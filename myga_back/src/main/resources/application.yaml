@@ -3,8 +3,8 @@ server:
 
 # 기본 설정
 spring:
-  datasource:
-
+  profiles:
+    active: prod
 
 # 개발 환경 설정
 ---
@@ -13,7 +13,9 @@ spring:
     activate:
       on-profile: dev
   datasource:
-
+    url: jdbc:mysql://localhost:3306/dev_db
+    username: dev_user
+    password: dev_password
 
 # 프로덕션 환경 설정
 ---
@@ -22,20 +24,16 @@ spring:
     activate:
       on-profile: prod
   datasource:
-
-
-
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: ${MYSQL_DATASOURCE_URL}
-#    username: ${MYSQL_DATASOURCE_USERNAME}
-#    password: ${MYSQL_DATASOURCE_PASSWORD}
-
-#    jpa:
-#      hibernate:
-#        ddl-auto: create
-#      show-sql: false
-#      database: mysql
-#      database-platform: org.hibernate.dialect.MySQL8Dialect
-#      properties:
-#        hibernate:
-#          format_sql: true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        format_sql: true

@@ -6,7 +6,7 @@ services:
       context: ./myga_front
       dockerfile: dockerfile-vue
     ports:
-      - "5173:5173"
+      - "${VUE_PORT}:5173"
     volumes:
       - vue_build:/dist
     command: ["npm", "run", "dev", "--", "--host"]
@@ -16,7 +16,7 @@ services:
       context: ./myga_front
       dockerfile: dockerfile-vue
     ports:
-      - "5174:5173"
+      - "${VUE_CANARY_PORT}:5173"
     volumes:
       - vue_build:/dist
     command: [ "npm", "run", "dev", "--", "--host" ]
@@ -26,52 +26,65 @@ services:
       context: ./myga_back
       dockerfile: dockerfile-spring
     ports:
-      - "8037:8037"
+      - "${SPRING_PORT}:${SPRING_PORT}"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - DB_HOST=mysql-primary
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
 
   spring-canary:
     build:
       context: ./myga_back
       dockerfile: dockerfile-spring
     ports:
-      - "8038:8037"
+      - "${SPRING_CANARY_PORT}:8037"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - DB_HOST=mysql-primary
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
 
-  nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /home/ubuntu/myga/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /home/ubuntu/myga/nginx/conf.d:/etc/nginx/conf.d
-      - /home/ubuntu/myga/certbot/conf:/etc/letsencrypt
-      - /home/ubuntu/myga/certbot/www:/var/www/certbot
-
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - /home/ubuntu/myga/certbot/www:/var/www/certbot
-      - /home/ubuntu/myga/certbot/conf:/etc/letsencrypt
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done'"
- 
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /jenkins:/var/jenkins_home
-      - /home:/home
-    ports:
-      - 8080:8080
-    privileged: true
-    user: root
+  # Primary MySQL
+  mysql-primary:
+    image: mysql
     environment:
-      - TZ=Asia/Seoul
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_primary_data:/var/lib/mysql
+    ports:
+      - "${DB_PORT}:3306"
+    command: --server-id=1 --log-bin=mysql-bin
+
+  # Replica MySQL (Read-only)
+  mysql-replica:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_replica_data:/var/lib/mysql
+    ports:
+      - "${MYSQL_REPLICA_PORT}:3306"
+    command: --server-id=2 --log-bin=mysql-bin --relay-log=mysql-relay-bin
+    depends_on:
+      - mysql-primary
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        service mysql start && \
+        mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CHANGE MASTER TO MASTER_HOST='mysql-primary', MASTER_USER='root', MASTER_PASSWORD='$MYSQL_ROOT_PASSWORD', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS= 4;" && \
+        mysql -u root -p$MYSQL_ROOT_PASSWORD -e "START SLAVE; tail -f /dev/null"
 
 volumes:
   vue_build:
+  mysql_primary_data:
+  mysql_replica_data:
