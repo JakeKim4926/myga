@@ -23,11 +23,20 @@ spring:
   config:
     activate:
       on-profile: prod
-  datasource:
+  datasource.master:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${MYSQL_DATABASE}
+    url: jdbc:mysql://${MASTER_DB_HOST}:${MASTER_DB_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
+
+  datasource.slave:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${SLAVE_DB_HOST}:${SLAVE_DB_PORT}/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+---
+spring:
   jpa:
     hibernate:
       ddl-auto: update
