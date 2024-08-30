@@ -5,6 +5,8 @@ server:
 spring:
   profiles:
     active: prod
+  config:
+    import: optional:file:.env[.properties]
 
 # 개발 환경 설정
 ---
@@ -23,6 +25,13 @@ spring:
   config:
     activate:
       on-profile: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MASTER_DB_HOST}:${MASTER_DB_PORT}/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  # 만약 다중 데이터 소스를 사용하려면 추가 설정 필요
   datasource.master:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MASTER_DB_HOST}:${MASTER_DB_PORT}/${MYSQL_DATABASE}
