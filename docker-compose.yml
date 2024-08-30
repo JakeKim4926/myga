@@ -80,9 +80,11 @@ services:
       - /bin/bash
       - -c
       - |
-        service mysql start && \
+        mysqld & \
         mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CHANGE MASTER TO MASTER_HOST='mysql-primary', MASTER_USER='root', MASTER_PASSWORD='$MYSQL_ROOT_PASSWORD', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS= 4;" && \
-        mysql -u root -p$MYSQL_ROOT_PASSWORD -e "START SLAVE; tail -f /dev/null"
+        mysql -u root -p$MYSQL_ROOT_PASSWORD -e "START SLAVE;" && \
+        tail -f /dev/null
+#service 명령어는 대부분의 리눅스에서 시스템 서비스를 관리하기 위해 사용되지만, MySQL Docker 이미지에는 기본적으로 포함되지 않을 수 있다.
 
 volumes:
   vue_build:
