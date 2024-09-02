@@ -48,16 +48,20 @@ services:
       - DB_PASSWORD=${MYSQL_PASSWORD}
 
   nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
+    image: nginx:latest
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - /home/ubuntu/myga/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - /home/ubuntu/myga/nginx/conf.d:/etc/nginx/conf.d
-      - /home/ubuntu/myga/certbot/conf:/etc/letsencrypt
-      - /home/ubuntu/myga/certbot/www:/var/www/certbot
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    environment:
+      - VUE_PORT=${VUE_PORT}
+      - SPRING_PORT=${SPRING_PORT}
+      - VUE_CANARY_PORT=${VUE_CANARY_PORT}
+      - SPRING_CANARY_PORT=${SPRING_CANARY_PORT}
+    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/template.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
   certbot:
     image: certbot/certbot
