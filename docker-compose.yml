@@ -28,6 +28,7 @@ services:
     ports:
       - "${SPRING_PORT}:8037"
     environment:
+      - SPRING_PORT=${SPRING_PORT}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - DB_HOST=mysql-primary
       - DB_PORT=${DB_PORT}
@@ -41,6 +42,7 @@ services:
     ports:
       - "${SPRING_CANARY_PORT}:8037"
     environment:
+      - SPRING_PORT=${SPRING_PORT}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - DB_HOST=mysql-primary
       - DB_PORT=${DB_PORT}
