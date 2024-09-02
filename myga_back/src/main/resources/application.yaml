@@ -1,12 +1,10 @@
-server:
-  port: 8037
-
 # 기본 설정
 spring:
   profiles:
     active: prod
-  config:
-    import: optional:file:.env[.properties]
+
+server:
+  port: ${SPRING_PORT}
 
 # 개발 환경 설정
 ---
@@ -15,7 +13,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mysql://localhost:3306/dev_db
+    jdbc-url: jdbc:mysql://localhost:3306/dev_db
     username: dev_user
     password: dev_password
 
@@ -27,20 +25,20 @@ spring:
       on-profile: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MASTER_DB_HOST}:${MASTER_DB_PORT}/${MYSQL_DATABASE}
+    jdbc-url: jdbc:mysql://${MASTER_DB_HOST}:${MASTER_DB_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
 
   # 만약 다중 데이터 소스를 사용하려면 추가 설정 필요
   datasource.master:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MASTER_DB_HOST}:${MASTER_DB_PORT}/${MYSQL_DATABASE}
+    jdbc-url: jdbc:mysql://${MASTER_DB_HOST}:${MASTER_DB_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
 
   datasource.slave:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${SLAVE_DB_HOST}:${SLAVE_DB_PORT}/${MYSQL_DATABASE}
+    jdbc-url: jdbc:mysql://${SLAVE_DB_HOST}:${SLAVE_DB_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
 
@@ -51,7 +49,7 @@ spring:
       ddl-auto: update
     show-sql: false
     database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.MySQLDialect
     properties:
       hibernate:
         format_sql: true
