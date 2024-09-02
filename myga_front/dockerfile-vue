@@ -16,7 +16,5 @@ COPY . .
 # 빌드
 RUN npm run build
 
-EXPOSE 5173
-
 # 애플리케이션 시작 명령어
 CMD ["npm", "run", "preview"]
