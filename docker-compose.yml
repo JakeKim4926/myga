@@ -35,11 +35,16 @@ services:
       - TZ=Asia/Seoul
       - SPRING_PORT=${SPRING_PORT}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - MASTER_DB_HOST=${MASTER_DB_HOST}
+      - MASTER_DB_PORT=${MASTER_DB_PORT}
+      - SLAVE_DB_HOST=${SLAVE_DB_HOST}
+      - SLAVE_DB_PORT=${SLAVE_DB_PORT}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - DB_HOST=mysql-primary
       - DB_PORT=${DB_PORT}
-      - DB_USER=${MYSQL_USER}
-      - DB_PASSWORD=${MYSQL_PASSWORD}
-
   spring-canary:
     build:
       context: ./myga_back
@@ -50,10 +55,16 @@ services:
       - TZ=Asia/Seoul
       - SPRING_PORT=${SPRING_PORT}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - MASTER_DB_HOST=${MASTER_DB_HOST}
+      - MASTER_DB_PORT=${MASTER_DB_PORT}
+      - SLAVE_DB_HOST=${SLAVE_DB_HOST}
+      - SLAVE_DB_PORT=${SLAVE_DB_PORT}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - DB_HOST=mysql-primary
       - DB_PORT=${DB_PORT}
-      - DB_USER=${MYSQL_USER}
-      - DB_PASSWORD=${MYSQL_PASSWORD}
 
   nginx:
     image: nginx:latest
