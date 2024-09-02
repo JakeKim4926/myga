@@ -2,8 +2,6 @@
 spring:
   profiles:
     active: prod
-  config:
-    import: optional:classpath:myenv.properties
 
 server:
   port: ${SPRING_PORT}

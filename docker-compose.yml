@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   vue:
     build:
@@ -9,6 +7,8 @@ services:
       - "${VUE_PORT}:5173"
     volumes:
       - vue_build:/dist
+    environment:
+      - TZ=Asia/Seoul
     command: ["npm", "run", "dev", "--", "--host"]
 
   vue-canary:
@@ -19,6 +19,8 @@ services:
       - "${VUE_CANARY_PORT}:5173"
     volumes:
       - vue_build:/dist
+    environment:
+      - TZ=Asia/Seoul
     command: [ "npm", "run", "dev", "--", "--host" ]
 
   spring:
@@ -28,6 +30,7 @@ services:
     ports:
       - "${SPRING_PORT}:8037"
     environment:
+      - TZ=Asia/Seoul
       - SPRING_PORT=${SPRING_PORT}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - DB_HOST=mysql-primary
@@ -42,6 +45,7 @@ services:
     ports:
       - "${SPRING_CANARY_PORT}:8037"
     environment:
+      - TZ=Asia/Seoul
       - SPRING_PORT=${SPRING_PORT}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - DB_HOST=mysql-primary
@@ -59,6 +63,7 @@ services:
       - ./nginx/certs:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     environment:
+      - TZ=Asia/Seoul
       - VUE_PORT=${VUE_PORT}
       - SPRING_PORT=${SPRING_PORT}
       - VUE_CANARY_PORT=${VUE_CANARY_PORT}
@@ -71,33 +76,38 @@ services:
     volumes:
       - /home/ubuntu/myga/certbot/www:/var/www/certbot
       - /home/ubuntu/myga/certbot/conf:/etc/letsencrypt
+    environment:
+      - TZ=Asia/Seoul
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done'"
 
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
-  # Primary MySQL
+    environment:
+      - TZ=Asia/Seoul
+
   mysql-primary:
     image: mysql
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - TZ=Asia/Seoul
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysql_primary_data:/var/lib/mysql
     ports:
       - "${DB_PORT}:3306"
     command: --server-id=1 --log-bin=mysql-bin
 
-  # Replica MySQL (Read-only)
   mysql-replica:
     image: mysql
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      - TZ=Asia/Seoul
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysql_replica_data:/var/lib/mysql
     ports:
@@ -117,9 +127,3 @@ services:
         mysql -u root -p$MYSQL_ROOT_PASSWORD -e "CHANGE MASTER TO MASTER_HOST='mysql-primary', MASTER_USER='root', MASTER_PASSWORD='$MYSQL_ROOT_PASSWORD', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS= 4;" && \
         mysql -u root -p$MYSQL_ROOT_PASSWORD -e "START SLAVE;" && \
         tail -f /dev/null
-#service 명령어는 대부분의 리눅스에서 시스템 서비스를 관리하기 위해 사용되지만, MySQL Docker 이미지에는 기본적으로 포함되지 않을 수 있다.
-
-volumes:
-  vue_build:
-  mysql_primary_data:
-  mysql_replica_data:
