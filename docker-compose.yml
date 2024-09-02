@@ -26,7 +26,7 @@ services:
       context: ./myga_back
       dockerfile: dockerfile-spring
     ports:
-      - "${SPRING_PORT}:${SPRING_PORT}"
+      - "${SPRING_PORT}:8037"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
       - DB_HOST=mysql-primary
