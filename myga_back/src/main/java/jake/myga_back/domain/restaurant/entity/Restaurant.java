@@ -22,7 +22,7 @@ public class Restaurant {
     @Column(name = "restaurant_name", nullable = false)
     private String name;
 
-    @Column(name = "restaurant_img")
+    @Column(name = "restaurant_img", length = 1000)
     private String image;
 
     @Column(name = "restaurant_category")
@@ -31,10 +31,10 @@ public class Restaurant {
     @Column(name = "restaurant_score")
     private Double score;
 
-    @Column(name = "restaurant_time")
+    @Column(name = "restaurant_time", length = 1000)
     private String time;
 
-    @Column(name = "restaurant_link")
+    @Column(name = "restaurant_link", length = 1000)
     private String link;
 
     @Column(name = "restaurant_call")
